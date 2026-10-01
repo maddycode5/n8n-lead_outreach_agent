@@ -1,0 +1,17 @@
+.env
+.env.*
+*.key
+*.pem
+credentials.json
+client_secret*.json
+token*.json
+.n8n/
+n8n_data/
+data/
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

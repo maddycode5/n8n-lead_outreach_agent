@@ -1,0 +1,1227 @@
+{
+  "name": "Tech Lead Outreach Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "id": "faa93d20-8e0d-46c4-b2c8-ee8c376864bf",
+      "name": "Daily Scrape",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -784,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "MapSearch",
+        "operation": "search",
+        "query": "Indian SaaS startup founder CTO contact us company -reddit -quora -medium -linkedin -youtube -facebook -twitter",
+        "limit": 5,
+        "requestOptions": {}
+      },
+      "id": "1b8d886d-7fea-408a-a7cb-75f77f8f02ef",
+      "name": "Search Tech Leads",
+      "type": "@mendable/n8n-nodes-firecrawl.firecrawl",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        544
+      ],
+      "credentials": {
+        "firecrawlApi": {
+          "id": "k5cTx2vkyryegzjG",
+          "name": "Firecrawl account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data.web",
+        "options": {}
+      },
+      "id": "2adcd977-ea37-4c26-913a-7783fc5944ab",
+      "name": "Split Results",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "requestOptions": {}
+      },
+      "id": "79271619-7232-400f-a853-bcf4a12a661b",
+      "name": "Scrape Lead Page",
+      "type": "@mendable/n8n-nodes-firecrawl.firecrawl",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        544
+      ],
+      "credentials": {
+        "firecrawlApi": {
+          "id": "k5cTx2vkyryegzjG",
+          "name": "Firecrawl account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "scrape-ok",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "5ee40f30-5330-4ea1-b756-36cee11484f0",
+      "name": "Scrape Succeeded",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -32,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "email-present",
+              "leftValue": "={{ $json.output?.email ?? \"\" }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e19ad3f9-5df6-4b2d-b159-36c1beaa16cf",
+      "name": "Has Email",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        384,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f1",
+              "name": "company_name",
+              "value": "={{ $json.output.company_name }}",
+              "type": "string"
+            },
+            {
+              "id": "f2",
+              "name": "website",
+              "value": "={{ $json.output.website }}",
+              "type": "string"
+            },
+            {
+              "id": "f3",
+              "name": "contact_name",
+              "value": "={{ $json.output.founder_owner || $json.output.cto_technology_decision_maker || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "f4",
+              "name": "job_title",
+              "value": "={{ $json.output.job_title }}",
+              "type": "string"
+            },
+            {
+              "id": "f5",
+              "name": "email",
+              "value": "={{ $json.output.email }}",
+              "type": "string"
+            },
+            {
+              "id": "f6",
+              "name": "phone",
+              "value": "={{ $json.output.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "f7",
+              "name": "linkedin_url",
+              "value": "={{ $json.output.linkedin_url }}",
+              "type": "string"
+            },
+            {
+              "id": "f8",
+              "name": "location",
+              "value": "={{ $json.output.location }}",
+              "type": "string"
+            },
+            {
+              "id": "f9",
+              "name": "industry",
+              "value": "={{ $json.output.industry}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "37170784-7084-4f19-bc23-4ace2082a81a",
+      "name": "Prepare Lead Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1xe5GANRsuVThHEXXZ4v0_Q6ZkrB_O0HypaShUf5UeJ0",
+          "mode": "list",
+          "cachedResultName": "TECH-LEAD",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xe5GANRsuVThHEXXZ4v0_Q6ZkrB_O0HypaShUf5UeJ0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xe5GANRsuVThHEXXZ4v0_Q6ZkrB_O0HypaShUf5UeJ0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "company_name": "={{ $json.company_name }}",
+            "contact_name": "={{ $json.contact_name }}",
+            "website": "={{ $json.website }}",
+            "job_title": "={{ $json.job_title }}",
+            "phone": "={{ $json.phone }}",
+            "email": "={{ $json.email }}",
+            "linkedin_url": "={{ $json.linkedin_url }}",
+            "industry": "={{ $json.industry }}",
+            "location": "={{ $json.location }}",
+            "status": "Contact Found"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "company_name",
+              "displayName": "company_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "website",
+              "displayName": "website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "contact_name",
+              "displayName": "contact_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "job_title",
+              "displayName": "job_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "linkedin_url",
+              "displayName": "linkedin_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "industry",
+              "displayName": "industry",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "b0584cb6-1b9a-40fd-a9bd-c308002e6a96",
+      "name": "Save Lead to Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        640,
+        1104
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "AdcE6rzsou8pO0C9",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "=Quick note for {{ $(\"Save Lead to Sheet\").item.json.contact_name }} at {{ $(\"Save Lead to Sheet\").item.json.company_name }}",
+        "emailType": "text",
+        "message": "=Hi {{ $(\"Save Lead to Sheet\").item.json.contact_name }},  I came across {{ $(\"Save Lead to Sheet\").item.json.company_name }} and was impressed by what your team is building.  I'd love to connect briefly about how we could help your engineering team with AI, automation, and software solutions. Would you be open to a short call this week?  \nBest regards,\nMadhav",
+        "options": {}
+      },
+      "id": "fcccd84e-d865-4ada-b36a-5eb6a3963ab3",
+      "name": "Email Tech Lead",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        848,
+        1104
+      ],
+      "webhookId": "7b85697e-c6bc-4979-b509-c78c79635a1b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "MYinXWR0gl9TZjpF",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1xe5GANRsuVThHEXXZ4v0_Q6ZkrB_O0HypaShUf5UeJ0",
+          "mode": "list",
+          "cachedResultName": "TECH-LEAD",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xe5GANRsuVThHEXXZ4v0_Q6ZkrB_O0HypaShUf5UeJ0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xe5GANRsuVThHEXXZ4v0_Q6ZkrB_O0HypaShUf5UeJ0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "Email sent",
+            "email": "={{ $(\"Save Lead to Sheet\").item.json.email }}"
+          },
+          "matchingColumns": [
+            "email"
+          ],
+          "schema": [
+            {
+              "id": "company_name",
+              "displayName": "company_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "website",
+              "displayName": "website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "contact_name",
+              "displayName": "contact_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "job_title",
+              "displayName": "job_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "linkedin_url",
+              "displayName": "linkedin_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "industry",
+              "displayName": "industry",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "e60c8490-651e-48e7-a469-2c3cda78d921",
+      "name": "Mark Lead Done",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1072,
+        1104
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "AdcE6rzsou8pO0C9",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "company_name",
+              "value": "={{ $json.output.company_name }}",
+              "type": "string"
+            },
+            {
+              "id": "a2",
+              "name": "website",
+              "value": "={{ $json.output.website}}",
+              "type": "string"
+            },
+            {
+              "id": "c2c86415-efe8-471e-bccb-ebeb9dc7b059",
+              "name": "contact_name",
+              "value": "={{ $json.output.founder_owner || $json.output.cto_technology_decision_maker || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "c58a20c3-e42f-4206-899e-c1ff4b8b2bf1",
+              "name": "job_title",
+              "value": "={{ $json.output.job_title }}",
+              "type": "string"
+            },
+            {
+              "id": "c870da81-9321-4ef4-8e2b-075ca97b151a",
+              "name": "=email",
+              "value": "={{ $json.output.email || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "aac42241-25ba-4553-bae3-f361e28767e6",
+              "name": "=phone",
+              "value": "={{ $json.output.phone || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "ce88e90c-19f2-4107-ac78-05014d170898",
+              "name": "linkedin_url",
+              "value": "={{ $json.output.linkedin_url || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "fa4a0c54-e7a0-44d6-bd18-7de7a3e099c8",
+              "name": "location",
+              "value": "={{ $json.output.location || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "cd7a4867-0103-4ccf-9a55-41d52298d2e9",
+              "name": "industry",
+              "value": "={{ $json.output.industry || \"\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "bd923217-b5a8-4222-b8a4-bd88fef6f102",
+      "name": "Prepare Contact Search",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        368,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "MapSearch",
+        "operation": "search",
+        "query": "={{ $json.website ? \"site:\" + $json.website.replace(/^https?:\\/\\//, \"\").replace(/^www\\./, \"\").split(\"/\")[0] + \" contact\" : '\"' + $json.company_name + '\" contact' }}",
+        "limit": 5,
+        "requestOptions": {}
+      },
+      "id": "3de9e827-270b-41f9-96b3-0887db142c9e",
+      "name": "Find Contact Page",
+      "type": "@mendable/n8n-nodes-firecrawl.firecrawl",
+      "typeVersion": 1,
+      "position": [
+        624,
+        560
+      ],
+      "credentials": {
+        "firecrawlApi": {
+          "id": "k5cTx2vkyryegzjG",
+          "name": "Firecrawl account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "contact-url-found",
+              "leftValue": "={{ $json.data.web?.[0]?.url || \"\" }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "00a86d33-1e35-4a51-8f1b-ee9b27a1d145",
+      "name": "Contact URL Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        848,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.data.web?.[0]?.url || \"\" }}",
+        "requestOptions": {}
+      },
+      "id": "fafd935b-6916-4ca7-8442-728d14bfa244",
+      "name": "Scrape Contact Page",
+      "type": "@mendable/n8n-nodes-firecrawl.firecrawl",
+      "typeVersion": 1,
+      "position": [
+        1072,
+        544
+      ],
+      "credentials": {
+        "firecrawlApi": {
+          "id": "k5cTx2vkyryegzjG",
+          "name": "Firecrawl account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "contact-scrape-ok",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "5f742bef-ad3e-4338-ab2d-ca07bd143057",
+      "name": "Contact Scrape Succeeded",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1264,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "contact-email-present",
+              "leftValue": "={{ $json.output.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "88f13842-f9df-4895-9293-96915be93f58",
+      "name": "Has Contact Email",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1760,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "r1",
+              "name": "company_name",
+              "value": "={{ $('Prepare Contact Search').item.json.company_name }}",
+              "type": "string"
+            },
+            {
+              "id": "r2",
+              "name": "website",
+              "value": "={{ $('Prepare Contact Search').item.json.website }}",
+              "type": "string"
+            },
+            {
+              "id": "r3",
+              "name": "contact_name",
+              "value": "={{ $json.output.contact_name || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "r4",
+              "name": "job_title",
+              "value": "={{ $json.output.job_title || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "r5",
+              "name": "email",
+              "value": "={{ $json.output.email || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "r6",
+              "name": "phone",
+              "value": "={{ $json.output.phone || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "r7",
+              "name": "linkedin_url",
+              "value": "={{ $json.output.linkedin_url || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "r8",
+              "name": "location",
+              "value": "={{ $('Prepare Contact Search').item.json.location }}",
+              "type": "string"
+            },
+            {
+              "id": "r9",
+              "name": "industry",
+              "value": "={{ $('Prepare Contact Search').item.json.industry }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5565acf2-2b5a-47ea-8e11-bc9b1d423510",
+      "name": "Prepare Recovered Lead Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1872,
+        848
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        144,
+        288
+      ],
+      "id": "aaed451d-c5be-4bfe-8dc7-8a26d886c09a",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Co0Kr1NMOA5jmlpl",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.data.markdown }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "company_name",
+              "description": "Company or business name"
+            },
+            {
+              "name": "website",
+              "description": "Official website URL of the company"
+            },
+            {
+              "name": "founder_owner",
+              "description": "Founder or owner name, only if explicitly mentioned"
+            },
+            {
+              "name": "cto_technology_decision_maker",
+              "description": "CTO or technology decision-maker name, only if explicitly mentioned"
+            },
+            {
+              "name": "job_title",
+              "description": "Job title of the identified decision-maker"
+            },
+            {
+              "name": "email",
+              "description": "Email address explicitly present on the webpage"
+            },
+            {
+              "name": "phone",
+              "description": "Phone number explicitly present on the webpage"
+            },
+            {
+              "name": "linkedin_url",
+              "description": "LinkedIn URL explicitly present on the webpage"
+            },
+            {
+              "name": "location",
+              "description": "Company or business location"
+            },
+            {
+              "name": "industry",
+              "description": "Industry or business sector"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        112
+      ],
+      "id": "58f0acb1-26ce-44d5-b9c3-f5db0bcc382b",
+      "name": "Information Extractor"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1472,
+        704
+      ],
+      "id": "b1cd50dc-ba68-49a4-ae79-fbfb822274b0",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Co0Kr1NMOA5jmlpl",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.data.markdown }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "contact_name",
+              "description": "Name of the person or contact explicitly mentioned on the webpage"
+            },
+            {
+              "name": "job_title",
+              "description": "Job title or role of the identified contact"
+            },
+            {
+              "name": "email",
+              "description": "Email address explicitly present on the webpage"
+            },
+            {
+              "name": "phone",
+              "description": "Phone number explicitly present on the webpage"
+            },
+            {
+              "name": "linkedin_url",
+              "description": "LinkedIn profile URL explicitly present on the webpage"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        1472,
+        528
+      ],
+      "id": "9404e9c0-03d9-4ace-9849-cd019c4a2820",
+      "name": "Information Extractor2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Daily Scrape": {
+      "main": [
+        [
+          {
+            "node": "Search Tech Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Tech Leads": {
+      "main": [
+        [
+          {
+            "node": "Split Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Results": {
+      "main": [
+        [
+          {
+            "node": "Scrape Lead Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape Lead Page": {
+      "main": [
+        [
+          {
+            "node": "Scrape Succeeded",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape Succeeded": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Email": {
+      "main": [
+        [
+          {
+            "node": "Prepare Lead Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Contact Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Lead Data": {
+      "main": [
+        [
+          {
+            "node": "Save Lead to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Lead to Sheet": {
+      "main": [
+        [
+          {
+            "node": "Email Tech Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Tech Lead": {
+      "main": [
+        [
+          {
+            "node": "Mark Lead Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Contact Search": {
+      "main": [
+        [
+          {
+            "node": "Find Contact Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Contact Page": {
+      "main": [
+        [
+          {
+            "node": "Contact URL Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contact URL Found?": {
+      "main": [
+        [
+          {
+            "node": "Scrape Contact Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape Contact Page": {
+      "main": [
+        [
+          {
+            "node": "Contact Scrape Succeeded",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contact Scrape Succeeded": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Save Lead to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Contact Email": {
+      "main": [
+        [
+          {
+            "node": "Prepare Recovered Lead Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Recovered Lead Data": {
+      "main": [
+        [
+          {
+            "node": "Save Lead to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "Has Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor2": {
+      "main": [
+        [
+          {
+            "node": "Has Contact Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "cd7a25f6-9708-4c5d-922b-f6d813f558ca",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ab24a29f4a85c16988015cc99bd20552650a722e2db2208ac9185188163d76ec"
+  },
+  "nodeGroups": [],
+  "id": "dS8IJWOMaHszEDQr",
+  "tags": []
+}
