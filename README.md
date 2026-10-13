@@ -1,41 +1,52 @@
-﻿# ðŸ¤– AI Tech Lead Scraping & Outreach Automation
+# AI Tech Lead Scraping & Outreach Automation
 
 An end-to-end **n8n automation for discovering technology and SaaS companies, extracting decision-maker information using AI, enriching contact details, storing leads in Google Sheets, and sending personalized outreach emails through Gmail.**
 
 The workflow combines **Firecrawl + Google Gemini + Google Sheets + Gmail + n8n** to automate the lead-generation and outreach pipeline.
 
-> âš ï¸ This repository contains the workflow structure only.  
+> This repository contains the workflow structure only.  
 > You must connect your own API keys, OAuth credentials, Google Sheet, and Gmail account.
 
 ---
 
-## ðŸš€ What This Project Does
+##  What This Project Does
 
 The automation performs the following pipeline:
 
 ```text
 Daily Trigger
-      â†“
+    |
+    v
 Search Technology / SaaS Leads
-      â†“
+    |
+    v
 Split Search Results
-      â†“
+    |
+    v
 Scrape Company Website
-      â†“
+    |
+    v
 Extract Company & Contact Information
-      â†“
+    |
+    v
 Check for Email
-      â†“
+    |
+    v
 Search for Contact Page
-      â†“
+    |
+    v
 Scrape Contact Page
-      â†“
+    |
+    v
 Extract Contact Information
-      â†“
+    |
+    v
 Save Lead to Google Sheets
-      â†“
+    |
+    v
 Send Outreach Email
-      â†“
+    |
+    v
 Mark Lead as Done
 ```
 
@@ -50,83 +61,69 @@ The goal is to reduce repetitive manual work involved in:
 
 ---
 
-# âœ¨ Features
+#  Features
 
-- ðŸ”Ž Automated web lead discovery
-- ðŸŒ Website scraping using Firecrawl
-- ðŸ¤– AI-powered information extraction using Google Gemini
-- ðŸ‘¤ Founder / CTO / technology decision-maker extraction
-- ðŸ“§ Email extraction
-- ðŸ“ž Phone number extraction
-- ðŸ”— LinkedIn URL extraction
-- ðŸ¢ Company and industry extraction
-- ðŸ”„ Contact-page recovery when the first scrape does not provide a contact
-- ðŸ“Š Automatic Google Sheets lead storage
-- ðŸ“© Gmail outreach automation
-- â° Scheduled daily execution
-- ðŸ³ Docker-based local n8n deployment
-- ðŸ” Credentials remain with the user instead of being stored in this repository
+-  Automated web lead discovery
+-  Website scraping using Firecrawl
+-? AI-powered information extraction using Google Gemini
+- Contact Founder / CTO / technology decision-maker extraction
+- Email Email extraction
+- Phone Phone number extraction
+- Links LinkedIn URL extraction
+- Company Company and industry extraction
+- Update Contact-page recovery when the first scrape does not provide a contact
+- Sheets Automatic Google Sheets lead storage
+- Email Gmail outreach automation
+- Schedule Scheduled daily execution
+- Docker Docker-based local n8n deployment
+- Security Credentials remain with the user instead of being stored in this repository
 
 ---
 
-# ðŸ§  Workflow Architecture
+# Workflow Workflow Architecture
 
 ## High-Level Architecture
 
 ```text
-                         â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                         â”‚   Daily Trigger  â”‚
-                         â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                                  â†“
-                         â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                         â”‚ Firecrawl Search â”‚
-                         â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                                  â†“
-                         â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                         â”‚ Split Results    â”‚
-                         â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                                  â†“
-                         â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                         â”‚ Scrape Website   â”‚
-                         â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                                  â†“
-                         â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                         â”‚ Gemini Extractionâ”‚
-                         â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                                  â†“
-                           â”Œâ”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”
-                           â”‚ Has Email?  â”‚
-                           â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜
-                                  â†“
-                         â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                         â”‚ Contact Search   â”‚
-                         â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                                  â†“
-                         â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                         â”‚ Contact Scraping â”‚
-                         â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                                  â†“
-                         â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                         â”‚ Gemini Contact   â”‚
-                         â”‚ Extraction       â”‚
-                         â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                                  â†“
-                         â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                         â”‚ Google Sheets    â”‚
-                         â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                                  â†“
-                         â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                         â”‚ Gmail Outreach   â”‚
-                         â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                                  â†“
-                         â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                         â”‚ Mark Lead Done   â”‚
-                         â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+Daily Trigger
+    |
+    v
+Firecrawl Search
+    |
+    v
+Split Results
+    |
+    v
+Scrape Website
+    |
+    v
+Gemini Extraction
+    |
+    v
+Check for Email
+    |
+    v
+Contact Search
+    |
+    v
+Contact Scraping
+    |
+    v
+Gemini Contact Extraction
+    |
+    v
+Google Sheets
+    |
+    v
+Gmail Outreach
+    |
+    v
+Mark Lead Done
 ```
 
 ---
 
-# ðŸ› ï¸ Tech Stack
+# Tech Stack Tech Stack
 
 | Technology | Purpose |
 |---|---|
@@ -140,7 +137,7 @@ The goal is to reduce repetitive manual work involved in:
 
 ---
 
-# ðŸ“‹ Prerequisites
+# Prerequisites Prerequisites
 
 Before starting, install:
 
@@ -156,7 +153,7 @@ You do **not** need to install Python or Node.js to run the workflow.
 
 ---
 
-# ðŸ³ 1. Run n8n Using Docker
+# Docker 1. Run n8n Using Docker
 
 Clone the repository:
 
@@ -201,7 +198,7 @@ The included Docker Compose configuration uses a persistent Docker volume so tha
 
 ---
 
-# ðŸ”¥ 2. Install the Firecrawl n8n Community Node
+# Setup 2. Install the Firecrawl n8n Community Node
 
 This workflow uses the Firecrawl community node.
 
@@ -209,9 +206,9 @@ Inside n8n:
 
 ```text
 Settings
-   â†“
+   v
 Community Nodes
-   â†“
+   v
 Install
 ```
 
@@ -225,7 +222,7 @@ After installation, restart n8n if required.
 
 ---
 
-# ðŸ”‘ 3. Create Your Firecrawl API Key
+# API Key 3. Create Your Firecrawl API Key
 
 Create an account on Firecrawl and generate an API key.
 
@@ -233,9 +230,9 @@ Inside n8n:
 
 ```text
 Credentials
-   â†“
+   v
 Create Credential
-   â†“
+   v
 Firecrawl
 ```
 
@@ -252,7 +249,7 @@ The workflow uses Firecrawl for:
 
 ---
 
-# ðŸ¤– 4. Configure Google Gemini
+# AI 4. Configure Google Gemini
 
 The workflow uses Google Gemini for extracting structured information from scraped webpages.
 
@@ -293,7 +290,7 @@ from the company's contact page.
 
 ---
 
-# ðŸ“Š 5. Configure Google Sheets
+# Sheets 5. Configure Google Sheets
 
 Create a Google Sheet that will store your leads.
 
@@ -329,7 +326,7 @@ The workflow will write extracted lead information into the sheet.
 
 ---
 
-# ðŸ“§ 6. Configure Gmail
+# Email 6. Configure Gmail
 
 Create a Gmail credential in n8n and authenticate your Gmail account.
 
@@ -357,7 +354,7 @@ This allows you to verify:
 
 ---
 
-# ðŸ” 7. Google OAuth Configuration
+# Security 7. Google OAuth Configuration
 
 If you are running n8n locally and configuring Google OAuth manually, your redirect URL will generally be:
 
@@ -371,7 +368,7 @@ For a local development setup, make sure the Google OAuth application and test u
 
 ---
 
-# ðŸ“¥ 8. Import the Workflow
+# Import 8. Import the Workflow
 
 The workflow is located at:
 
@@ -383,9 +380,9 @@ Inside n8n:
 
 ```text
 Workflows
-   â†“
+   v
 Import from File
-   â†“
+   v
 Select workflows/lead-outreach.json
 ```
 
@@ -393,7 +390,7 @@ After importing, open the workflow and configure the credentials.
 
 ---
 
-# ðŸ”— 9. Connect Your Credentials
+# Links 9. Connect Your Credentials
 
 After importing the workflow, check every node that uses an external service.
 
@@ -412,7 +409,7 @@ You should **not need to rebuild the workflow from scratch**.
 
 ---
 
-# ðŸ§ª 10. Test the Workflow
+# Testing 10. Test the Workflow
 
 Before activating the workflow, test the nodes individually.
 
@@ -448,7 +445,7 @@ Then perform a complete end-to-end test.
 
 ---
 
-# â° 11. Daily Automation
+# Schedule 11. Daily Automation
 
 The included workflow uses a daily schedule.
 
@@ -473,7 +470,7 @@ You can change the schedule according to your requirements.
 
 ---
 
-# ðŸŽ¯ 12. Customizing Lead Search
+# Customization 12. Customizing Lead Search
 
 The Firecrawl search node contains the search query used for discovering leads.
 
@@ -508,17 +505,17 @@ You can customize:
 
 ---
 
-# ðŸ“ Project Structure
+# Project Structure Project Structure
 
 ```text
 n8n-lead_outreach_agent/
-â”‚
-â”œâ”€â”€ workflows/
-â”‚   â””â”€â”€ lead-outreach.json
-â”‚
-â”œâ”€â”€ docker-compose.yml
-â”œâ”€â”€ .gitignore
-â””â”€â”€ README.md
+|
+|-- workflows/
+|   `-- lead-outreach.json
+|
+|-- docker-compose.yml
+|-- .gitignore
+`-- README.md
 ```
 
 ### `workflows/lead-outreach.json`
@@ -539,7 +536,7 @@ Project documentation and setup instructions.
 
 ---
 
-# ðŸ”’ Security
+# Security Security
 
 **Never commit credentials to GitHub.**
 
@@ -569,7 +566,7 @@ If you accidentally expose an API key:
 
 ---
 
-# âš ï¸ Responsible Use
+# WARNING: Responsible Use
 
 This workflow is intended for legitimate lead-generation and business outreach.
 
@@ -588,7 +585,7 @@ You are responsible for how you configure and use this workflow.
 
 ---
 
-# ðŸ› Troubleshooting
+# Troubleshooting Troubleshooting
 
 ## n8n is not opening
 
@@ -693,7 +690,7 @@ Test the Google Sheets node independently before running the complete workflow.
 
 ---
 
-# ðŸ”„ Updating the Project
+# Update Updating the Project
 
 If you modify the workflow locally:
 
@@ -721,7 +718,7 @@ git push
 
 ---
 
-# ðŸ¤ Contributing
+# Contributing Contributing
 
 Contributions are welcome.
 
@@ -739,15 +736,15 @@ Fork the repository, make your changes, and open a pull request.
 
 ---
 
-# ðŸ“„ License
+# License License
 
 Add an appropriate open-source license before distributing this project for broad reuse.
 
 ---
 
-# â­ Support
+# Star Support
 
-If this project is useful, consider giving the repository a â­ on GitHub.
+If this project is useful, consider giving the repository a Star on GitHub.
 
 ---
 
@@ -771,30 +768,30 @@ If this project is useful, consider giving the repository a â­ on GitHub.
 
 ### Nodes
 
-- **Daily Scrape** â€” scheduleTrigger
-- **Search Tech Leads** â€” @mendable/n8n-nodes-firecrawl.firecrawl
-- **Split Results** â€” splitOut
-- **Scrape Lead Page** â€” @mendable/n8n-nodes-firecrawl.firecrawl
-- **Scrape Succeeded** â€” if
-- **Has Email** â€” if
-- **Prepare Lead Data** â€” set
-- **Save Lead to Sheet** â€” googleSheets
-- **Email Tech Lead** â€” gmail
-- **Mark Lead Done** â€” googleSheets
-- **Prepare Contact Search** â€” set
-- **Find Contact Page** â€” @mendable/n8n-nodes-firecrawl.firecrawl
-- **Contact URL Found?** â€” if
-- **Scrape Contact Page** â€” @mendable/n8n-nodes-firecrawl.firecrawl
-- **Contact Scrape Succeeded** â€” if
-- **Has Contact Email** â€” if
-- **Prepare Recovered Lead Data** â€” set
-- **Google Gemini Chat Model** â€” @n8n/n8n-nodes-langchain.lmChatGoogleGemini
-- **Information Extractor** â€” @n8n/n8n-nodes-langchain.informationExtractor
-- **Google Gemini Chat Model1** â€” @n8n/n8n-nodes-langchain.lmChatGoogleGemini
-- **Information Extractor2** â€” @n8n/n8n-nodes-langchain.informationExtractor
-- **Prepare Duplicate Check** â€” set
-- **Read Existing Lead** â€” googleSheets
-- **Code in JavaScript** â€” code
-- **Merge** â€” merge
-<!-- AUTO-WORKFLOW-DOCS:END -->
+- **Daily Scrape** - scheduleTrigger
+- **Search Tech Leads** - @mendable/n8n-nodes-firecrawl.firecrawl
+- **Split Results** - splitOut
+- **Scrape Lead Page** - @mendable/n8n-nodes-firecrawl.firecrawl
+- **Scrape Succeeded** - if
+- **Has Email** - if
+- **Prepare Lead Data** - set
+- **Save Lead to Sheet** - googleSheets
+- **Email Tech Lead** - gmail
+- **Mark Lead Done** - googleSheets
+- **Prepare Contact Search** - set
+- **Find Contact Page** - @mendable/n8n-nodes-firecrawl.firecrawl
+- **Contact URL Found?** - if
+- **Scrape Contact Page** - @mendable/n8n-nodes-firecrawl.firecrawl
+- **Contact Scrape Succeeded** - if
+- **Has Contact Email** - if
+- **Prepare Recovered Lead Data** - set
+- **Google Gemini Chat Model** - @n8n/n8n-nodes-langchain.lmChatGoogleGemini
+- **Information Extractor** - @n8n/n8n-nodes-langchain.informationExtractor
+- **Google Gemini Chat Model1** - @n8n/n8n-nodes-langchain.lmChatGoogleGemini
+- **Information Extractor2** - @n8n/n8n-nodes-langchain.informationExtractor
+- **Prepare Duplicate Check** - set
+- **Read Existing Lead** - googleSheets
+- **Code in JavaScript** - code
+- **Merge** - merge
 
+<!-- AUTO-WORKFLOW-DOCS:END -->
