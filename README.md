@@ -736,9 +736,9 @@ Fork the repository, make your changes, and open a pull request.
 
 ---
 
-# License License
+# License
 
-Add an appropriate open-source license before distributing this project for broad reuse.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
 
