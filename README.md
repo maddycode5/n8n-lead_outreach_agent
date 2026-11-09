@@ -80,7 +80,7 @@ The goal is to reduce repetitive manual work involved in:
 
 ---
 
-# Workflow Workflow Architecture
+# Workflow Architecture
 
 ## High-Level Architecture
 
@@ -123,7 +123,7 @@ Mark Lead Done
 
 ---
 
-# Tech Stack Tech Stack
+# Tech Stack
 
 | Technology | Purpose |
 |---|---|
@@ -137,7 +137,7 @@ Mark Lead Done
 
 ---
 
-# Prerequisites Prerequisites
+# Prerequisites
 
 Before starting, install:
 
@@ -505,7 +505,7 @@ You can customize:
 
 ---
 
-# Project Structure Project Structure
+# Project Structure
 
 ```text
 n8n-lead_outreach_agent/
@@ -536,7 +536,7 @@ Project documentation and setup instructions.
 
 ---
 
-# Security Security
+# Security
 
 **Never commit credentials to GitHub.**
 
@@ -585,8 +585,7 @@ You are responsible for how you configure and use this workflow.
 
 ---
 
-# Troubleshooting Troubleshooting
-
+# Troubleshooting 
 ## n8n is not opening
 
 Check Docker:
@@ -718,7 +717,7 @@ git push
 
 ---
 
-# Contributing Contributing
+# Contributing
 
 Contributions are welcome.
 
